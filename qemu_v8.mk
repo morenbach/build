@@ -376,7 +376,7 @@ QEMU_XEN	?= -drive if=none,file=$(XEN_EXT4),format=raw,id=hd1 \
 		   -device virtio-blk-device,drive=hd1
 else
 QEMU_SMP 	?= 2
-QEMU_MEM 	?= 1057
+QEMU_MEM 	?= 2048
 QEMU_VIRT	= false
 endif
 
@@ -385,9 +385,9 @@ run-only:
 	ln -sf $(ROOT)/out-br/images/rootfs.cpio.gz $(BINARIES_PATH)/
 	$(call check-terminal)
 	$(call run-help)
-	$(call launch-terminal,54320,"Normal World")
-	$(call launch-terminal,54321,"Secure World")
-	$(call wait-for-ports,54320,54321)
+	#$(call launch-terminal,54320,"Normal World")
+	#$(call launch-terminal,54321,"Secure World")
+	#$(call wait-for-ports,54320,54321)
 	cd $(BINARIES_PATH) && $(QEMU_BUILD)/aarch64-softmmu/qemu-system-aarch64 \
 		-nographic \
 		-serial tcp:localhost:54320 -serial tcp:localhost:54321 \
@@ -399,9 +399,9 @@ run-only:
 		-bios bl1.bin		\
 		-initrd rootfs.cpio.gz \
 		-kernel Image -no-acpi \
-		-append 'console=ttyAMA0,38400 keep_bootcon root=/dev/vda2 $(QEMU_KERNEL_BOOTARGS)' \
+		-append 'console=ttyAMA0,38400 keep_bootcon root=/dev/vda2 nokaslr $(QEMU_KERNEL_BOOTARGS)' \
 		$(QEMU_XEN) \
-		$(QEMU_EXTRA_ARGS)
+		$(QEMU_EXTRA_ARGS) 
 
 ifneq ($(filter check check-rust,$(MAKECMDGOALS)),)
 CHECK_DEPS := all
